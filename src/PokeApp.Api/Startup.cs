@@ -8,6 +8,20 @@ namespace PokeApp.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Headers["API-KEY"] == "key123")
+                {
+                    await next();
+                }
+                else
+                {
+                    context.Response.StatusCode = 401;
+                    await context.Response.WriteAsync("No access");
+                }
+                
+            });
+
             app.Run(context =>
             {
                 const string logo = @"
