@@ -22,23 +22,9 @@ namespace Microsoft.AspNetCore.Builder
 
             var tokenValidationParameters = new TokenValidationParameters
             {
-
                 ValidateAudience = false,
                 ValidIssuers = new[] { defaultIssuer },
-                
-                IssuerSigningKeyResolver = (token, securityToken, kid, validationParameters) =>
-                {
-                    var jwtToken = securityToken as JwtSecurityToken;
-
-                    var appId = jwtToken.Claims.SingleOrDefault(c => c.Type == "appid")?.Value;
-                    var secret = validator.LookupSecret(appId);
-                    
-                    var keys = new List<SecurityKey>()
-                    {
-                        new SymmetricSecurityKey(Base64UrlDecode(secret))
-                    };
-                    return keys;
-                }
+                IssuerSigningKeyResolver = validator.ResolveKeys
             };
 
             app.UseJwtBearerAuthentication(new JwtBearerOptions
@@ -46,10 +32,13 @@ namespace Microsoft.AspNetCore.Builder
                 TokenValidationParameters = tokenValidationParameters
             });
             
-
+            
             app.MapWhen(context =>
             {
-                return context.Request.Path == "/login" && context.Request.Method == "POST";
+                return context.Request.Path == "/jwt/token" && 
+                context.Request.Method == "POST" &&
+                context.Request.Headers.Any(h=>h.Key == "Content-Type" && h.Value == "application/x-www-form-urlencoded;charset=UTF-8")
+                ;
             }, config =>
             {
                 config.Run(async context =>
@@ -129,7 +118,7 @@ namespace Microsoft.AspNetCore.Builder
 
                 SigningCredentials = new SigningCredentials(
 
-    new SymmetricSecurityKey(Base64UrlDecode(secret)), SecurityAlgorithms.HmacSha256)
+    new SymmetricSecurityKey(Utilities.Base64UrlDecode(secret)), SecurityAlgorithms.HmacSha256)
             };
             var handler = new JwtSecurityTokenHandler();
 
@@ -153,22 +142,7 @@ namespace Microsoft.AspNetCore.Builder
             s = s.Replace('/', '_'); // 63rd char of encoding
             return s;
         }
-        static byte[] Base64UrlDecode(string arg)
-        {
-            string s = arg;
-            s = s.Replace('-', '+'); // 62nd char of encoding
-            s = s.Replace('_', '/'); // 63rd char of encoding
-            switch (s.Length % 4) // Pad with trailing '='s
-            {
-                case 0: break; // No pad chars in this case
-                case 2: s += "=="; break; // Two pad chars
-                case 3: s += "="; break; // One pad char
-                default:
-                    throw new System.Exception(
-             "Illegal base64url string!");
-            }
-            return Convert.FromBase64String(s); // Standard base64 decoder
-        }
+        
     }
 
     
