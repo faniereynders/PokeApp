@@ -1,26 +1,21 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using System.Linq;
 
 namespace PokeApp.Api
 {
     public class Startup
     {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddJwtAuthentication();
+        }
+        
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Headers["API-KEY"] == "key123")
-                {
-                    await next();
-                }
-                else
-                {
-                    context.Response.StatusCode = 401;
-                    await context.Response.WriteAsync("No access");
-                }
-                
-            });
+            app.UseJwtAuthentication();
 
             app.Run(context =>
             {
@@ -32,8 +27,17 @@ namespace PokeApp.Api
  |_|   \___/|_|\_\___/_/   \_\ .__/| .__/  /_/   \_\_|  |___|
                              |_|   |_|                       ";
 
-                return context.Response.WriteAsync(logo);
+                var result = $"{logo}\nAppId: {context.User.Claims.SingleOrDefault(c=>c.Type == "appid").Value}";
+                return context.Response.WriteAsync(result);
             });
         }
+
+        
+        
+        
+
+        
+        
+       
     }
 }
