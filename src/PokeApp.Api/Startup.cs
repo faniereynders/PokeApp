@@ -16,7 +16,8 @@ namespace PokeApp.Api
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddIniFile("consumers.ini");
+                .AddIniFile("consumers.ini")
+                .AddEnvironmentVariables();
 
             if (env.IsDevelopment())
             {
@@ -33,13 +34,13 @@ namespace PokeApp.Api
                 .AddOptions()
                 .Configure<ConsumerOptions>(configuration.GetSection("Consumers"))
                 .AddAuthentication()
-                .AddSingleton<IConfigureOptions<JwtAuthenticationOptions>, ConfigureJwtAuthenticationOptions>()
-                .AddSingleton<IClientValidator, ClientValidator>()
+                .AddSingleton<IConfigureOptions<JwtAuthenticationOptions>, JwtAuthenticationOptionsConfiguration>()
+                .AddSingleton<IConsumerValidator, ConsumerValidator>()
                 .AddSingleton(configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IOptions<JwtAuthenticationOptions> jwtOptions, IOptions<ConsumerOptions> ss)
+        public void Configure(IApplicationBuilder app, IOptions<JwtAuthenticationOptions> jwtOptions)
         {
             app.UseJwtBearerAuthentication(
                 authenticationEndpoint: jwtOptions.Value.TokenEndpoint,
