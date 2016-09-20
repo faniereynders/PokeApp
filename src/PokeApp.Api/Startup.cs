@@ -16,8 +16,7 @@ namespace PokeApp.Api
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddIniFile("consumers.ini")
-                .AddEnvironmentVariables();
+                .AddIniFile("consumers.ini");
 
             if (env.IsDevelopment())
             {
@@ -25,6 +24,7 @@ namespace PokeApp.Api
             }
 
             builder.AddEnvironmentVariables();
+
             configuration = builder.Build();
         }
 
