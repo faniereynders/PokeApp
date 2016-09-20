@@ -1,38 +1,50 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System;
+using Microsoft.Extensions.Options;
 using System.Linq;
 
 namespace PokeApp.Api
 {
     public class Startup
     {
-        private const string defaultIssuer = "http://api.pokeapp.io";
-        private readonly static SecurityKey serverKey = new SymmetricSecurityKey(Utilities.Base64UrlDecode("superdupersecretkey123"));
+        private readonly IConfigurationRoot configuration;
+        public Startup(IHostingEnvironment env)
+        {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddIniFile("consumers.ini");
+
+            if (env.IsDevelopment())
+            {
+                builder.AddUserSecrets();
+            }
+
+            builder.AddEnvironmentVariables();
+            configuration = builder.Build();
+        }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddOptions()
+                .Configure<ConsumerOptions>(configuration.GetSection("Consumers"))
+                .AddAuthentication()
+                .AddSingleton<IConfigureOptions<JwtAuthenticationOptions>, ConfigureJwtAuthenticationOptions>()
                 .AddSingleton<IClientValidator, ClientValidator>()
-                .AddAuthentication();
+                .AddSingleton(configuration);
         }
-        
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
-        {
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateAudience = false,
-                ValidIssuer = defaultIssuer,
-                IssuerSigningKey = serverKey
-            };
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IOptions<JwtAuthenticationOptions> jwtOptions, IOptions<ConsumerOptions> ss)
+        {
             app.UseJwtBearerAuthentication(
-                authenticationEndpoint: "/jwt/token",
+                authenticationEndpoint: jwtOptions.Value.TokenEndpoint,
                 options: new JwtBearerOptions {
-                    TokenValidationParameters = tokenValidationParameters,
+                    TokenValidationParameters = jwtOptions.Value.Parameters,
                 });
 
             app.Map("/ping", appContext =>
