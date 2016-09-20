@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace PokeApp.Api.Controllers
 {
-    public static class HomeController
+    public class HomeController
     {
         public static void Get(IApplicationBuilder app)
         {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace PokeApp.Api.Controllers
 {
-    public static class PingController
+    public class PingController
     {
         public static void Get(IApplicationBuilder app)
         {
