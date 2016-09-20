@@ -9,7 +9,7 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class JwtAppBuilderExtensions
     {
-        public static IApplicationBuilder UseJwtBearerAuthentication(this IApplicationBuilder app, PathString authenticationEndpoint, JwtBearerOptions options, TimeSpan tokenLifeTime)
+        public static IApplicationBuilder UseJwtBearerAuthentication(this IApplicationBuilder app, PathString authenticationEndpoint, JwtBearerOptions options)
         {
             app.UseJwtBearerAuthentication(options);
 
@@ -28,7 +28,7 @@ namespace Microsoft.AspNetCore.Builder
                     var valid = validator.Verify(credentials.Key, credentials.Value);
                     if (valid)
                     {
-                        var accessToken = await Utilities.GenerateToken(credentials.Key, options.TokenValidationParameters.IssuerSigningKey, options.TokenValidationParameters.ValidIssuer, tokenLifeTime);
+                        var accessToken = await Utilities.GenerateToken(credentials.Key, options.TokenValidationParameters.IssuerSigningKey, options.TokenValidationParameters.ValidIssuer);
                         var result = new
                         {
                             token_type = "Bearer",

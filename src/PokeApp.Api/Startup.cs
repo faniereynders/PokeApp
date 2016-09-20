@@ -33,8 +33,7 @@ namespace PokeApp.Api
                 authenticationEndpoint: "/jwt/token",
                 options: new JwtBearerOptions {
                     TokenValidationParameters = tokenValidationParameters,
-                },
-                tokenLifeTime: TimeSpan.FromHours(1));
+                });
 
             app.Map("/ping", appContext =>
             {

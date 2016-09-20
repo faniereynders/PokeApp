@@ -39,7 +39,7 @@ namespace PokeApp.Api
         public static long ToUnixDate(DateTime date)
             => (long)Math.Round((date.ToUniversalTime() - new DateTimeOffset(1970, 1, 1, 0, 0, 0, TimeSpan.Zero)).TotalSeconds);
 
-        public static async Task<string> GenerateToken(string appId, SecurityKey key, string issuer, TimeSpan lifetime)
+        public static async Task<string> GenerateToken(string appId, SecurityKey key, string issuer)
         {
             var now = DateTime.UtcNow;
             var claims = new List<Claim>()
@@ -52,7 +52,7 @@ namespace PokeApp.Api
             var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var handler = new JwtSecurityTokenHandler();
-            var token = handler.CreateJwtSecurityToken(issuer, appId, identity, now, now.Add(lifetime), now, signingCredentials);
+            var token = handler.CreateJwtSecurityToken(issuer, appId, identity, now, now.Add(TimeSpan.FromHours(1)), now, signingCredentials);
             
             var encodedJwt = handler.WriteToken(token);
             
