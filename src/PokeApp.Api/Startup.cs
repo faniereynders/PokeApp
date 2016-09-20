@@ -53,7 +53,7 @@ namespace PokeApp.Api
             app.UseAuthorization();
 
             //protected resource:
-            app.Map("/", HomeController.Get);
+            app.Map("", HomeController.Get);
         }
     }
 }
