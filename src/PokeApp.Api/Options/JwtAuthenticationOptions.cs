@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace PokeApp.Api
+namespace PokeApp.Api.Options
 {
     public class JwtAuthenticationOptions
     {

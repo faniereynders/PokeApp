@@ -1,4 +1,4 @@
-﻿namespace PokeApp.Api
+﻿namespace PokeApp.Api.Validation
 {
     public interface IConsumerValidator
     {

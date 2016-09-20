@@ -2,9 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using PokeApp.Api.Options;
 using System;
 
-namespace PokeApp.Api
+namespace PokeApp.Api.Infrastructure
 {
     public class JwtAuthenticationOptionsConfiguration : IConfigureOptions<JwtAuthenticationOptions>
     {

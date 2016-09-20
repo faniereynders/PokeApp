@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Options;
+using PokeApp.Api.Options;
 using System.Collections.Generic;
 
-namespace PokeApp.Api
+namespace PokeApp.Api.Validation
 {
     public class ConsumerValidator : IConsumerValidator
     {

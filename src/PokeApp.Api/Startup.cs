@@ -5,6 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using PokeApp.Api.Infrastructure;
+using PokeApp.Api.Options;
+using PokeApp.Api.Validation;
 
 namespace PokeApp.Api
 {
@@ -40,13 +43,9 @@ namespace PokeApp.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IOptions<JwtAuthenticationOptions> jwtOptions)
+        public void Configure(IApplicationBuilder app)
         {
-            app.UseJwtBearerAuthentication(
-                authenticationEndpoint: jwtOptions.Value.TokenEndpoint,
-                options: new JwtBearerOptions {
-                    TokenValidationParameters = jwtOptions.Value.Parameters,
-                });
+            app.UseJwtBearerAuthenticationWithTokenIssuer();
 
             app.Map("/ping", appContext =>
             {

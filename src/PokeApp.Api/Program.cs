@@ -12,6 +12,7 @@ namespace PokeApp.Api
                 .UseContentRoot(Directory.GetCurrentDirectory())
                 .UseKestrel()
                 .UseStartup<Startup>()
+                .CaptureStartupErrors(true)
                 .Build();
 
             host.Run();

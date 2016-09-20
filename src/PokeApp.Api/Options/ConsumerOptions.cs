@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace PokeApp.Api
+namespace PokeApp.Api.Options
 {
     public class ConsumerOptions : Dictionary<string, string>
     {
