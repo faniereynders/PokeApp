@@ -1,22 +1,52 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Linq;
 
 namespace PokeApp.Api
 {
     public class Startup
     {
+        private const string defaultIssuer = "http://api.pokeapp.io";
+        private readonly static SecurityKey serverKey = new SymmetricSecurityKey(Utilities.Base64UrlDecode("superdupersecretkey123"));
+
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddJwtAuthentication();
+            services
+                .AddSingleton<IClientValidator, ClientValidator>()
+                .AddAuthentication();
         }
         
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            app.UseJwtAuthentication();
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateAudience = false,
+                ValidIssuer = defaultIssuer,
+                IssuerSigningKey = serverKey
+            };
 
+            app.UseJwtBearerAuthentication(
+                authenticationEndpoint: "/jwt/token",
+                options: new JwtBearerOptions {
+                    TokenValidationParameters = tokenValidationParameters,
+                },
+                tokenLifeTime: TimeSpan.FromHours(1));
+
+            app.Map("/ping", appContext =>
+            {
+                appContext.Run(context =>
+                {
+                    return context.Response.WriteAsync("Pong!");
+                });
+            });
+
+            app.UseAuthorization();
+
+            //protected resource:
             app.Run(context =>
             {
                 const string logo = @"
