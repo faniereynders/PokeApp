@@ -1,6 +1,6 @@
 ﻿namespace PokeApp.Api
 {
-    public interface IClientValidator
+    public interface IConsumerValidator
     {
         bool Verify(string appId, string secret);
     }

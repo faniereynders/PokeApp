@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Server.Kestrel.Internal.Http;
 using Newtonsoft.Json;
 using PokeApp.Api;
-using System;
 using System.Linq;
 
 namespace Microsoft.AspNetCore.Builder
@@ -21,7 +20,7 @@ namespace Microsoft.AspNetCore.Builder
                 context.Request.HasFormContentType)
                 {
                     var headers = (FrameRequestHeaders)context.Request.Headers;
-                    var validator = (IClientValidator)app.ApplicationServices.GetService(typeof(IClientValidator));
+                    var validator = (IConsumerValidator)app.ApplicationServices.GetService(typeof(IConsumerValidator));
                     
                     var credentials = Utilities.GetCredentialsFromAuthorizationHeader(headers.HeaderAuthorization.First());
 
