@@ -22,6 +22,10 @@ namespace PokeApp.Api
                 var configuration = provider.GetRequiredService<IConfigurationRoot>();
                 var jwtConfigs = configuration.GetSection(nameof(JwtAuthenticationOptions));
 
+                if (jwtConfigs[nameof(TokenValidationParameters.IssuerSigningKey)] == null)
+                {
+                    throw new ArgumentNullException("IssuerSigningKey not found. Add key value to configuration.");
+                }
                 options.Parameters = new TokenValidationParameters
                 {
                     ValidIssuer = jwtConfigs[nameof(TokenValidationParameters.ValidIssuer)],
