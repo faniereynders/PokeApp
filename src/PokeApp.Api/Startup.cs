@@ -5,6 +5,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System.Linq;
+using PokeApp.Api.Infrastructure;
+using PokeApp.Api.Options;
+using PokeApp.Api.Validation;
+using PokeApp.Api.Controllers;
 
 namespace PokeApp.Api
 {
@@ -40,46 +44,16 @@ namespace PokeApp.Api
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IOptions<JwtAuthenticationOptions> jwtOptions)
+        public void Configure(IApplicationBuilder app)
         {
-            app.UseJwtBearerAuthentication(
-                authenticationEndpoint: jwtOptions.Value.TokenEndpoint,
-                options: new JwtBearerOptions {
-                    TokenValidationParameters = jwtOptions.Value.Parameters,
-                });
+            app.UseJwtBearerAuthenticationWithTokenIssuer();
 
-            app.Map("/ping", appContext =>
-            {
-                appContext.Run(context =>
-                {
-                    return context.Response.WriteAsync("Pong!");
-                });
-            });
+            app.Map("/ping", PingController.Get);
 
             app.UseAuthorization();
 
             //protected resource:
-            app.Run(context =>
-            {
-                const string logo = @"
-  ____       _     __    _                     _    ____ ___ 
- |  _ \ ___ | | __/_/   / \   _ __  _ __      / \  |  _ \_ _|
- | |_) / _ \| |/ / _ \ / _ \ | '_ \| '_ \    / _ \ | |_) | | 
- |  __/ (_) |   <  __// ___ \| |_) | |_) |  / ___ \|  __/| | 
- |_|   \___/|_|\_\___/_/   \_\ .__/| .__/  /_/   \_\_|  |___|
-                             |_|   |_|                       ";
-
-                var result = $"{logo}\nAppId: {context.User.Claims.SingleOrDefault(c=>c.Type == "appid").Value}";
-                return context.Response.WriteAsync(result);
-            });
+            app.Map("/", HomeController.Get);
         }
-
-        
-        
-        
-
-        
-        
-       
     }
 }
