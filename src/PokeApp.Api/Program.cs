@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace PokeApp.Api
 {
@@ -9,7 +10,13 @@ namespace PokeApp.Api
         {
             var host = new WebHostBuilder()
                 .UseKestrel()
-                .UseStartup<Startup>()
+                .Configure(app =>
+                {
+                    app.Run(async context =>
+                    {
+                        await context.Response.WriteAsync("This will be awesome");
+                    });
+                })
                 .Build();
 
             host.Run();
