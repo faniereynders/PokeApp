@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using System.Linq;
 using PokeApp.Api.Infrastructure;
 using PokeApp.Api.Options;
 using PokeApp.Api.Validation;
-using PokeApp.Api.Controllers;
 
 namespace PokeApp.Api
 {
@@ -37,10 +36,17 @@ namespace PokeApp.Api
             services
                 .AddOptions()
                 .Configure<ConsumerOptions>(configuration.GetSection("Consumers"))
-                .AddAuthentication()
                 .AddSingleton<IConfigureOptions<JwtAuthenticationOptions>, JwtAuthenticationOptionsConfiguration>()
                 .AddSingleton<IConsumerValidator, ConsumerValidator>()
                 .AddSingleton(configuration);
+
+            services
+                .AddMvcCore(options =>
+                {
+                    var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
+                    options.Filters.Add(new AuthorizeFilter(policy));
+                })
+                .AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,12 +54,7 @@ namespace PokeApp.Api
         {
             app.UseJwtBearerAuthenticationWithTokenIssuer();
 
-            app.Map("/ping", PingController.Get);
-
-            app.UseAuthorization();
-
-            //protected resource:
-            app.Map("", HomeController.Get);
+            app.UseMvc();
         }
     }
 }

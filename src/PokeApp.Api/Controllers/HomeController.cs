@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace PokeApp.Api.Controllers
 {
     public class HomeController
     {
-        public static void Get(IApplicationBuilder app)
+        [ActionContext]
+        public ActionContext ActionContext { get; set; }
+
+        [Route("")]
+        public IActionResult Get()
         {
-            app.Run(async context =>
-            {
-                const string logo = @"
+            const string logo = @"
   ____       _     __    _                     _    ____ ___ 
  |  _ \ ___ | | __/_/   / \   _ __  _ __      / \  |  _ \_ _|
  | |_) / _ \| |/ / _ \ / _ \ | '_ \| '_ \    / _ \ | |_) | | 
@@ -18,9 +19,8 @@ namespace PokeApp.Api.Controllers
  |_|   \___/|_|\_\___/_/   \_\ .__/| .__/  /_/   \_\_|  |___|
                              |_|   |_|                       ";
 
-                var result = $"{logo}\nAppId: {context.User.Claims.SingleOrDefault(c => c.Type == "appid").Value}";
-                await context.Response.WriteAsync(result);
-            });
+            var result = $"{logo}\nAppId: {ActionContext.HttpContext.User.Claims.SingleOrDefault(c => c.Type == "appid").Value}";
+            return new OkObjectResult(result);
         }
     }
 }
