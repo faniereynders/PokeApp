@@ -1,16 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace PokeApp.Api.Controllers
 {
+    [AllowAnonymous]
     public class PingController
     {
-        public static void Get(IApplicationBuilder app)
+        [Route("/ping")]
+        public IActionResult Get()
         {
-            app.Run(async context =>
-            {
-                await context.Response.WriteAsync("Pong!");
-            });
+            return new OkObjectResult("Pong!");
         }
     }
 }
