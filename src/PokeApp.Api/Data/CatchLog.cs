@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using PokeApp.Api.Models;
 using System.Linq;
-using PokeApp.Api.Infrastructure;
 
 namespace PokeApp.Api.Data
 {
@@ -15,10 +14,10 @@ namespace PokeApp.Api.Data
             this.lookup = lookup;
             this.logEntries = new List<LogEntry>()
             {
-                new LogEntry {CaughtAt = DateTime.Now, Id = 1, PlayerId = 1, PokemonId = 1 },
-                new LogEntry {CaughtAt = DateTime.Now, Id = 1, PlayerId = 1, PokemonId = 2 },
-                new LogEntry {CaughtAt = DateTime.Now, Id = 1, PlayerId = 1, PokemonId = 3 },
-                new LogEntry {CaughtAt = DateTime.Now, Id = 1, PlayerId = 1, PokemonId = 4 }
+                new LogEntry {CaughtAt = DateTime.Now, Id = 1, PlayerId = 253920080, PokemonId = 1 },
+                new LogEntry {CaughtAt = DateTime.Now, Id = 2, PlayerId = 253920080, PokemonId = 2 },
+                new LogEntry {CaughtAt = DateTime.Now, Id = 3, PlayerId = 253920080, PokemonId = 3 },
+                new LogEntry {CaughtAt = DateTime.Now, Id = 4, PlayerId = 253920080, PokemonId = 4 }
             };
         }
 
