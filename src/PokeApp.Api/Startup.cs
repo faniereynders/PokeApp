@@ -44,7 +44,8 @@ namespace PokeApp.Api
                 .AddMvcCore(options =>
                 {
                     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-                    options.Filters.Add(new AuthorizeFilter(policy));
+                    options.Filters.Add(new AuthorizeFilter(policy));                   
+                    options.OutputFormatters.Insert(0, new PingPongOutputFormatter());
                 })
                 .AddAuthorization();
         }
