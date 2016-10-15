@@ -9,7 +9,7 @@
         {
             get
             {
-                return $"https://img.pokemondb.net/artwork/{Name}.jpg";
+                return $"https://img.pokemondb.net/artwork/{Name.ToLower()}.jpg";
             }
         }
     }

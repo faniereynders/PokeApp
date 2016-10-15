@@ -24,11 +24,11 @@ namespace PokeApp.Api.Data
         }
         private async Task populatePokemons()
         {
-            pokeomons.Add(new Pokemon { Id = 1, Name = "Pokemon-1" });
-            pokeomons.Add(new Pokemon { Id = 2, Name = "Pokemon-2" });
-            pokeomons.Add(new Pokemon { Id = 3, Name = "Pokemon-3" });
-            pokeomons.Add(new Pokemon { Id = 4, Name = "Pokemon-4" });
-            pokeomons.Add(new Pokemon { Id = 5, Name = "Pokemon-5" });
+            pokeomons.Add(new Pokemon { Id = 1, Name = "Bulbasaur" });
+            pokeomons.Add(new Pokemon { Id = 2, Name = "Ivysaur" });
+            pokeomons.Add(new Pokemon { Id = 3, Name = "Venusaur" });
+            pokeomons.Add(new Pokemon { Id = 4, Name = "Charmander" });
+            pokeomons.Add(new Pokemon { Id = 5, Name = "Charmeleon" });
             await Task.FromResult(0);
         }
 
