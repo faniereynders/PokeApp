@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using PokeApp.Api.Data;
 using PokeApp.Api.Infrastructure;
 using PokeApp.Api.Options;
 using PokeApp.Api.Validation;
@@ -38,7 +39,9 @@ namespace PokeApp.Api
                 .Configure<ConsumerOptions>(configuration.GetSection("Consumers"))
                 .AddSingleton<IConfigureOptions<JwtAuthenticationOptions>, JwtAuthenticationOptionsConfiguration>()
                 .AddSingleton<IConsumerValidator, ConsumerValidator>()
-                .AddSingleton(configuration);
+                .AddSingleton(configuration)
+                .AddSingleton<IEntityLookup, EntityLookup>()
+                .AddTransient<ICatchLog, CatchLog>();
 
             services
                 .AddMvcCore(options =>
@@ -46,7 +49,8 @@ namespace PokeApp.Api
                     var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
                     options.Filters.Add(new AuthorizeFilter(policy));
                 })
-                .AddAuthorization();
+                .AddAuthorization()
+                .AddJsonFormatters();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
