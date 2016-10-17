@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -41,7 +42,11 @@ namespace PokeApp.Api
                 .AddSingleton<IConsumerValidator, ConsumerValidator>()
                 .AddSingleton(configuration)
                 .AddSingleton<IEntityLookup, EntityLookup>()
-                .AddTransient<ICatchLog, CatchLog>();
+                .AddTransient<ICatchLog, CatchLog>()
+                .AddDbContext<PokeAppDataContext>(options =>
+                {
+                    options.UseSqlServer(configuration.GetConnectionString(nameof(PokeAppDataContext)));
+                });
 
             services
                 .AddMvcCore(options =>

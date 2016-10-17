@@ -8,17 +8,12 @@ namespace PokeApp.Api.Data
     public class CatchLog : ICatchLog
     {
         private readonly IEntityLookup lookup;
-        private readonly List<LogEntry> logEntries;
-        public CatchLog(IEntityLookup lookup)
+        private readonly PokeAppDataContext dataContext;
+
+        public CatchLog(IEntityLookup lookup, PokeAppDataContext dataContext)
         {
             this.lookup = lookup;
-            this.logEntries = new List<LogEntry>()
-            {
-                new LogEntry {CaughtAt = DateTime.Now, Id = 1, PlayerId = 102807182, PokemonId = 1 },
-                new LogEntry {CaughtAt = DateTime.Now, Id = 2, PlayerId = 102807182, PokemonId = 2 },
-                new LogEntry {CaughtAt = DateTime.Now, Id = 3, PlayerId = 195824080, PokemonId = 3 },
-                new LogEntry {CaughtAt = DateTime.Now, Id = 4, PlayerId = 195824080, PokemonId = 4 }
-            };
+            this.dataContext = dataContext;
         }
 
         public Pokemon Add(Pokemon newItem)
@@ -26,14 +21,16 @@ namespace PokeApp.Api.Data
             return newItem;
         }
 
-        public LogItem AddEntry(LogEntry entry)
+        public LogEntry AddEntry(LogEntry entry)
         {
-            throw new NotImplementedException();
+            var newEntry = dataContext.LogEntries.Add(entry);
+            dataContext.SaveChanges();
+            return newEntry.Entity;
         }
 
         public IEnumerable<LogItem> GetAllFrom(int fromId, int count)
         {
-            var query = from entry in logEntries
+            var query = from entry in dataContext.LogEntries
                         join pokemon in lookup.Pokemons on entry.PokemonId equals pokemon.Id
                         join player in lookup.Players on entry.PlayerId equals player.Id
                         where entry.PokemonId >= fromId
