@@ -10,6 +10,7 @@ namespace PokeApp.Api
         {
             var host = new WebHostBuilder()
                 .UseContentRoot(Directory.GetCurrentDirectory())
+                .UseUrls("http://*:5000")
                 .UseKestrel()
                 .UseStartup<Startup>()
                 .CaptureStartupErrors(true)
